@@ -21,4 +21,7 @@ urlpatterns = [
 
     path('command-execution/', views.CommandExecutionListView.as_view(), name='command-execution-list'),
     path('command-execution/start/', views.CommandExecutionStartView.as_view(), name='command-execution-start'),
+
+    path('bulk-change-password/', views.BulkChangePasswordList.as_view(), name='bulk-change-password-list'),
+    path('bulk-change-password/create/', views.BulkChangePasswordCreate.as_view(), name='bulk-change-password-create'),
 ]

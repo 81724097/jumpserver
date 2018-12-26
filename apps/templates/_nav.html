@@ -65,6 +65,8 @@
     <ul class="nav nav-second-level">
         <li id="task"><a href="{% url 'ops:task-list' %}">{% trans 'Task list' %}</a></li>
         <li id="command-execution"><a href="{% url 'ops:command-execution-start' %}">{% trans 'Command execution' %}</a></li>
+{#        <li id="bulk-change-password"><a href="{% url 'ops:command-execution-start' %}">{% trans 'Bulk change password' %}</a></li>#}
+        <li id="bulk-change-password"><a href="{% url 'ops:bulk-change-password-list' %}">{% trans '批量改密' %}</a></li>
     </ul>
 </li>
 <li id="audits">
