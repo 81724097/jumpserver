@@ -10,8 +10,8 @@ from django.utils.translation import ugettext as _
 class BulkChangePassword(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=128, verbose_name=_('Name'))
-    hosts = models.ManyToManyField('assets.Asset')
     username = models.CharField(max_length=128, verbose_name=_('User'))
+    hosts = models.ManyToManyField('assets.Asset', verbose_name=_('Asset'))
     _password = models.CharField(max_length=256, blank=True, null=True, verbose_name=_('Password'))
     _result = models.TextField(blank=True, null=True, verbose_name=_('Result'))
     is_finished = models.BooleanField(default=False)
@@ -21,4 +21,8 @@ class BulkChangePassword(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def hosts_count(self):
+        return self.hosts.count()
 

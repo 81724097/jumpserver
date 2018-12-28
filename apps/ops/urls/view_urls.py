@@ -24,4 +24,5 @@ urlpatterns = [
 
     path('bulk-change-password/', views.BulkChangePasswordList.as_view(), name='bulk-change-password-list'),
     path('bulk-change-password/create/', views.BulkChangePasswordCreate.as_view(), name='bulk-change-password-create'),
+    path('bulk-change-password/<uuid:pk>/', views.BulkChangePasswordDetail.as_view(), name='bulk-change-password-detail'),
 ]

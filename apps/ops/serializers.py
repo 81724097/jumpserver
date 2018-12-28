@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from django.shortcuts import reverse
 
-from .models import Task, AdHoc, AdHocRunHistory, CommandExecution
+from .models import Task, AdHoc, AdHocRunHistory, CommandExecution, \
+    BulkChangePassword
 
 
 class CeleryResultSerializer(serializers.Serializer):
@@ -82,3 +83,13 @@ class CommandExecutionSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_log_url(obj):
         return reverse('api-ops:celery-task-log', kwargs={'pk': obj.id})
+
+
+class BulkChangePasswordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BulkChangePassword
+        fields = [
+            'id', 'name', 'username', 'hosts_count', 'is_finished',
+            'date_start', 'date_finished'
+        ]
