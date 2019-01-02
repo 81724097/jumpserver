@@ -5,9 +5,10 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView, Response
 from common.permissions import IsOrgAdmin
+from common.utils import get_object_or_none
+from assets.tasks import change_password_bulk
 from ..serializers import BulkChangePasswordSerializer
 from ..models import BulkChangePassword
-from ..tasks import run_bulk_change_password
 
 
 class BulkChangePasswordViewSet(viewsets.ModelViewSet):
@@ -21,5 +22,15 @@ class BulkChangePasswordRunApi(APIView):
 
     def get(self, request, **kwargs):
         pk = kwargs.get('pk')
-        task = run_bulk_change_password.delay(pk)
+        ch_password = get_object_or_none(BulkChangePassword, id=pk)
+
+        username = ch_password.username
+        password = ch_password.password
+        assets = ch_password.hosts.all()
+
+        task = change_password_bulk.delay(
+            username=username, password=password, assets=assets
+        )
+        from celery.result import AsyncResult
+
         return Response({'task': task.id})

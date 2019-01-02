@@ -408,6 +408,39 @@ def test_admin_user_connectability_period():
     pass
 
 
+### bulk change password ###
+
+
+def get_change_password_bulk_task(username, password):
+    tasks = []
+    tasks.append({
+        'name': 'change user ({}) password'.format(username),
+        'action': {
+            'module': 'user',
+            'args': 'name={} password={} update_password=always'.format(
+                username, encrypt_password(password, salt="K3mIlKK"),
+            ),
+        }
+    })
+    return tasks
+
+
+@shared_task
+def change_password_bulk(username, password, assets):
+    from ops.utils import update_or_create_ansible_task
+    tasks = get_change_password_bulk_task(username, password)
+    hosts = clean_hosts(assets)
+    if not hosts:
+        return {}
+    task_name = 'Bulk change password'
+    task, created = update_or_create_ansible_task(
+        task_name=task_name, hosts=hosts, tasks=tasks, pattern='all',
+        options=const.TASK_OPTIONS, run_as_admin=True, created_by='xiao-bai',
+    )
+    result = task.run()
+    return result
+
+
 # @shared_task
 # @register_as_period_task(interval=3600)
 # @after_app_ready_start

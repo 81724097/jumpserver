@@ -8,9 +8,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from ..inventory import JMSInventory
-from ..ansible.runner import CommandRunner
-
 
 class BulkChangePassword(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
@@ -28,10 +25,6 @@ class BulkChangePassword(models.Model):
         return self.name
 
     @property
-    def inventory(self):
-        return JMSInventory(self.hosts.all(), run_as_admin=True)
-
-    @property
     def result(self):
         if self._result:
             return json.loads(self._result)
@@ -46,19 +39,10 @@ class BulkChangePassword(models.Model):
     def hosts_count(self):
         return self.hosts.count()
 
-    def run(self):
-        print('-'*10 + ' ' + _('Task start') + ' ' + '-'*10)
-        self.date_start = timezone.now()
-        runner = CommandRunner(self.inventory)
-        try:
-            result = runner.execute('whoami', 'all')
-            self.result = result.results_command
-        except Exception as e:
-            print('Error occur: {}'.format(e))
-            self.result = {'error': str(e)}
-        self.is_finished = True
-        self.date_finished = timezone.now()
-        self.save()
-        print('-'*10 + ' ' + _('Task end') + ' ' + '-'*10)
-        return self.result
+    @property
+    def password(self):
+        return self._password
 
+    @password.setter
+    def password(self, password_raw):
+        self._password = password_raw

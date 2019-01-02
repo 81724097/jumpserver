@@ -3,7 +3,7 @@ from celery import shared_task, subtask
 
 from common.utils import get_logger, get_object_or_none
 from .celery.utils import register_as_period_task, after_app_shutdown_clean
-from .models import Task, CommandExecution, BulkChangePassword
+from .models import Task, CommandExecution
 
 logger = get_logger(__file__)
 
@@ -59,9 +59,3 @@ def hello(name, callback=None):
 def hello_callback(result):
     print(result)
     print("Hello callback")
-
-
-@shared_task
-def run_bulk_change_password(cid):
-    ch_password = get_object_or_none(BulkChangePassword, id=cid)
-    return ch_password.run()

@@ -33,10 +33,18 @@ class BulkChangePasswordForm(forms.ModelForm):
     class Meta:
         model = BulkChangePassword
         fields = [
-            'name', 'username', 'hosts',
+            'name', 'username', 'hosts', 'password'
         ]
         widgets = {
             'hosts': forms.SelectMultiple(
                 attrs={'class': 'select2', 'data-placeholder': _("Asset")}
             ),
         }
+
+    def save(self, commit=True):
+        password = self.cleaned_data.get('password')
+        ch_password = super().save(commit=commit)
+        if password:
+            ch_password.password = password
+            ch_password.save()
+        return ch_password
