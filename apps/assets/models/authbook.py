@@ -20,25 +20,13 @@ class AuthBook(AssetUser):
         return '{}@{}'.format(self.username, self.asset)
 
     @classmethod
-    def get_asset_auth_item(cls, asset, username):
-        return cls.objects.filter(asset=asset, username=username).latest()
-
-    @classmethod
-    def get_asset_auth(cls, asset, username):
-        item = cls.get_asset_auth_item(asset, username)
-        if item:
-            auth = {
-                'password': item.password,
-                'private_key': item.private_key,
-                'public_key': item.public_key,
-            }
+    def get_item_latest_by_asset_username(cls, asset, username):
+        items = cls.objects.filter(asset=asset, username=username)
+        if items:
+            item = items.latest()
         else:
-            auth = {
-                'password': None,
-                'private_key': None,
-                'public_key': None,
-            }
-        return auth
+            item = None
+        return item
 
     class Meta:
         get_latest_by = 'date_created'

@@ -112,8 +112,32 @@ class AssetUser(OrgModelMixin):
         if update_fields:
             self.save(update_fields=update_fields)
 
-    def get_auth(self, asset=None):
-        pass
+    def get_password(self, asset=None):
+        from .asset import Asset
+
+        if isinstance(asset, Asset):
+            item = self.get_password_item_from_authbook(asset)
+        else:
+            item = self
+
+        print('get password Type of item: {}, password: {}'.format(
+            type(item), item.password))
+        return item.password
+
+    def get_password_item_from_authbook(self, asset):
+        from .authbook import AuthBook
+
+        item = AuthBook.get_item_latest_by_asset_username(asset, self.username)
+        if item is None:
+            item = self
+        else:
+            item = self.get_password_item_latest(item)
+        return item
+
+    def get_password_item_latest(self, item):
+        if item and item.date_created < self.date_updated:
+            item = self
+        return item
 
     def clear_auth(self):
         self._password = ''

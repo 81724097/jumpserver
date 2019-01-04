@@ -296,14 +296,14 @@ def get_push_system_user_tasks(system_user):
         return []
 
     tasks = []
-    if system_user.password:
+    if system_user.get_password():
         tasks.append({
             'name': 'Add user {}'.format(system_user.username),
             'action': {
                 'module': 'user',
                 'args': 'name={} shell={} state=present password={}'.format(
                     system_user.username, system_user.shell,
-                    encrypt_password(system_user.password, salt="K3mIlKK"),
+                    encrypt_password(system_user.get_password(), salt="K3mIlKK"),
                 ),
             }
         })
